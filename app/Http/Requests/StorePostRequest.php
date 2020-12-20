@@ -25,7 +25,8 @@ class StorePostRequest extends FormRequest
     {
         return [
             'title' => 'required',
-            'post_url' => 'url',
+            'post_text' => 'string',
+            'post_url' => 'nullable|url',
         ];
     }
 }
