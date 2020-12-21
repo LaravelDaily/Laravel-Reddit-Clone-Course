@@ -13,6 +13,10 @@
                                 <a href="{{ $post->post_url }}" target="_blank">{{ $post->post_url }}</a>
                             </div>
                         @endif
+                        @if ($post->post_image != '')
+                            <img src="{{ asset('storage/posts/' . $post->id . '/thumbnail_' . $post->post_image) }}"/>
+                            <br /><br />
+                        @endif
                         {{ $post->post_text }}
 
                         @auth
