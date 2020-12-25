@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StorePostRequest;
 use App\Models\Community;
 use App\Models\Post;
+use App\Models\PostVote;
 use Illuminate\Http\Request;
 use Intervention\Image\Facades\Image;
 
@@ -33,7 +34,7 @@ class CommunityPostController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(StorePostRequest $request, Community $community)
@@ -64,18 +65,20 @@ class CommunityPostController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function show(Community $community, Post $post)
     {
+        $post->load('comments.user');
+
         return view('posts.show', compact('community', 'post'));
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function edit(Community $community, Post $post)
@@ -90,8 +93,8 @@ class CommunityPostController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param \Illuminate\Http\Request $request
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function update(StorePostRequest $request, Community $community, Post $post)
@@ -126,7 +129,7 @@ class CommunityPostController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function destroy(Community $community, Post $post)
@@ -138,5 +141,23 @@ class CommunityPostController extends Controller
         $post->delete();
 
         return redirect()->route('communities.show', [$community]);
+    }
+
+    public function vote($post_id, $vote)
+    {
+        $post = Post::with('community')->findOrFail($post_id);
+
+        if (!PostVote::where('post_id', $post_id)->where('user_id', auth()->id())->count()
+            && in_array($vote, [-1, 1]) && $post->user_id != auth()->id()) {
+            PostVote::create([
+                'post_id' => $post_id,
+                'user_id' => auth()->id(),
+                'vote' => $vote
+            ]);
+
+            $post->increment('votes', $vote);
+        }
+
+        return redirect()->route('communities.show', $post->community);
     }
 }

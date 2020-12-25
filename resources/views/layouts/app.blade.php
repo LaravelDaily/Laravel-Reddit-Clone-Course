@@ -16,6 +16,7 @@
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css" rel="stylesheet" />
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
@@ -80,7 +81,39 @@
         </nav>
 
         <main class="py-4">
-            @yield('content')
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-md-8">
+                        @yield('content')
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">Newest posts</div>
+
+                            <div class="card-body">
+                                @foreach($newestPosts as $post)
+                                    <a href="{{ route('communities.posts.show', [$post->community, $post]) }}">{{ $post->title }}</a>
+                                    <div class="mt-1">{{ $post->created_at->diffForHumans() }}</div>
+                                    <hr />
+                                @endforeach
+                            </div>
+                        </div>
+
+                        <div class="card mt-4">
+                            <div class="card-header">Newest communities</div>
+
+                            <div class="card-body">
+                                @foreach($newestCommunities as $community)
+                                    <a href="{{ route('communities.show', $community) }}">{{ $community->name }}</a>
+                                    ({{ $community->posts_count }} posts)
+                                    <div class="mt-1">{{ $community->created_at->diffForHumans() }}</div>
+                                    <hr />
+                                @endforeach
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </main>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
