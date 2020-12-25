@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Models\Post;
 
 class HomeController extends Controller
 {
@@ -13,6 +13,11 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home');
+        $posts = Post::with('community')->withCount(['votes' => function($query) {
+            $query->where('post_votes.created_at', '>', now()->subDays(7))
+                ->where('vote', 1);
+        }])->orderBy('votes_count', 'desc')->take(10)->get();
+
+        return view('home', compact('posts'));
     }
 }
