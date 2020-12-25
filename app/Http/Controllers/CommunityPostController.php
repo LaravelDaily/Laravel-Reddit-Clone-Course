@@ -154,8 +154,6 @@ class CommunityPostController extends Controller
                 'user_id' => auth()->id(),
                 'vote' => $vote
             ]);
-
-            $post->increment('votes', $vote);
         }
 
         return redirect()->route('communities.show', $post->community);

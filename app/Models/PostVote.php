@@ -10,4 +10,9 @@ class PostVote extends Model
     use HasFactory;
 
     protected $fillable = ['post_id', 'user_id', 'vote'];
+
+    public function post()
+    {
+        return $this->belongsTo(Post::class);
+    }
 }
