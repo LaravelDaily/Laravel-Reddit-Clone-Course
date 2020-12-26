@@ -5,6 +5,10 @@
         <div class="card-header">{{ $post->title }}</div>
 
         <div class="card-body">
+            @if (session('message'))
+                <div class="alert alert-info">{{ session('message') }}</div>
+            @endif
+
             @if ($post->post_url != '')
                 <div class="mb-2">
                     <a href="{{ $post->post_url }}" target="_blank">{{ $post->post_url }}</a>
@@ -37,10 +41,13 @@
                     <button type="submit" class="btn btn-sm btn-primary">Add Comment</button>
                 </form>
 
-                @if ($post->user_id == auth()->id())
+                @if (in_array(auth()->id(), [$post->user_id, $post->community->user_id]))
                     <hr/>
-                    <a href="{{ route('communities.posts.edit', [$community, $post]) }}"
-                       class="btn btn-sm btn-primary">Edit post</a>
+
+                    @if ($post->user_id == auth()->id())
+                        <a href="{{ route('communities.posts.edit', [$community, $post]) }}"
+                           class="btn btn-sm btn-primary">Edit post</a>
+                    @endif
 
                     <form action="{{ route('communities.posts.destroy', [$community, $post]) }}"
                           method="POST"
@@ -50,6 +57,17 @@
                         <button type="submit"
                                 class="btn btn-sm btn-danger"
                                 onclick="return confirm('Are you sure?')">Delete post
+                        </button>
+                    </form>
+                @else
+                    <hr/>
+                    <form action="{{ route('post.report', $post->id) }}"
+                          method="POST"
+                          style="display: inline-block">
+                        @csrf
+                        <button type="submit"
+                                class="btn btn-sm btn-danger"
+                                onclick="return confirm('Are you sure?')">Report post as inappropriate
                         </button>
                     </form>
                 @endif
