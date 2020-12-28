@@ -8,6 +8,7 @@ use App\Models\Post;
 use App\Models\PostVote;
 use App\Notifications\PostReportNotification;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Intervention\Image\Facades\Image;
 
 class CommunityPostController extends Controller
@@ -84,7 +85,7 @@ class CommunityPostController extends Controller
      */
     public function edit(Community $community, Post $post)
     {
-        if ($post->user_id != auth()->id()) {
+        if (Gate::denies('edit-post', $post)) {
             abort(403);
         }
 
@@ -100,7 +101,7 @@ class CommunityPostController extends Controller
      */
     public function update(StorePostRequest $request, Community $community, Post $post)
     {
-        if ($post->user_id != auth()->id()) {
+        if (Gate::denies('edit-post', $post)) {
             abort(403);
         }
 
@@ -135,29 +136,13 @@ class CommunityPostController extends Controller
      */
     public function destroy(Community $community, Post $post)
     {
-        if (!in_array(auth()->id(), [$post->user_id, $community->user_id])) {
+        if (Gate::denies('delete-post', $post)) {
             abort(403);
         }
 
         $post->delete();
 
         return redirect()->route('communities.show', [$community]);
-    }
-
-    public function vote($post_id, $vote)
-    {
-        $post = Post::with('community')->findOrFail($post_id);
-
-        if (!PostVote::where('post_id', $post_id)->where('user_id', auth()->id())->count()
-            && in_array($vote, [-1, 1]) && $post->user_id != auth()->id()) {
-            PostVote::create([
-                'post_id' => $post_id,
-                'user_id' => auth()->id(),
-                'vote' => $vote
-            ]);
-        }
-
-        return redirect()->route('communities.show', $post->community);
     }
 
     public function report($post_id)
