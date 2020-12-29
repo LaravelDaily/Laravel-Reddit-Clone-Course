@@ -23,7 +23,7 @@
             <br/><br/>
             @forelse ($posts as $post)
                 <div class="row">
-                    @livewire('post-votes', ['postId' => $post->id])
+                    @livewire('post-votes', ['post' => $post])
                     <div class="col-11">
                         <a href="{{ route('communities.posts.show', [$community, $post]) }}">
                             <h2>{{ $post->title }}</h2>

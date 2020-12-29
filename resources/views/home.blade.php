@@ -7,7 +7,7 @@
         <div class="card-body">
             @foreach ($posts as $post)
                 <div class="row">
-                    @livewire('post-votes', ['postId' => $post->id])
+                    @livewire('post-votes', ['post' => $post])
                     <div class="col-11">
                         <a href="{{ route('communities.posts.show', [$post->community, $post]) }}">
                             <h2>{{ $post->title }}</h2>
