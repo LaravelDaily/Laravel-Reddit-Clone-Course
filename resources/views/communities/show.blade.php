@@ -25,7 +25,7 @@
                 <div class="row">
                     @livewire('post-votes', ['post' => $post])
                     <div class="col-11">
-                        <a href="{{ route('communities.posts.show', [$community, $post]) }}">
+                        <a href="{{ route('communities.posts.show', [$post->id]) }}">
                             <h2>{{ $post->title }}</h2>
                         </a>
                         <p>{{ $post->created_at->diffForHumans() }}</p>

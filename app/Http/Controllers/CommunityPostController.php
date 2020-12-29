@@ -125,7 +125,7 @@ class CommunityPostController extends Controller
             $file->save(storage_path('app/public/posts/' . $post->id . '/thumbnail_' . $image));
         }
 
-        return redirect()->route('communities.posts.show', [$community, $post]);
+        return redirect()->route('communities.posts.show', [$post->id]);
     }
 
     /**
@@ -151,7 +151,7 @@ class CommunityPostController extends Controller
 
         $post->community->user->notify(new PostReportNotification($post));
 
-        return redirect()->route('communities.posts.show', [$post->community, $post])
+        return redirect()->route('communities.posts.show', [$post->id])
             ->with('message', 'Your report has been sent.');
     }
 }

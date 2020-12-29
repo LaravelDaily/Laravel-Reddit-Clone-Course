@@ -20,7 +20,7 @@
                 </thead>
                 <tbody>
                 @foreach ($communities as $community)
-                    <tr>
+                    <tr class="community-item">
                         <td>
                             <a href="{{ route('communities.show', $community) }}">{{ $community->name }}</a>
                         </td>
