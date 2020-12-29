@@ -46,7 +46,7 @@ class PostReportNotification extends Notification
         return (new MailMessage)
                     ->line('Post in your community has been flagged')
                     ->action('View Post', route('communities.posts.show',
-                        [$this->post->community, $this->post]))
+                        [$this->post->id]))
                     ->line('Thank you for using our application!');
     }
 
